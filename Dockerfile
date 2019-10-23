@@ -43,8 +43,6 @@ ARG host_uid=1001
 ARG host_gid=1001
 RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u $host_uid $USER_NAME
 
-RUN echo "host_uid=$host_uid"
-
 # Perform the Yocto build as user minicube (not as root).
 # NOTE: The USER command does not set the environment variable HOME.
 
@@ -65,25 +63,21 @@ RUN echo "$ssh_prv_key" > /home/$USER_NAME/.ssh/id_rsa && \
     chmod 600 /home/$USER_NAME/.ssh/id_rsa && \
     chmod 600 /home/$USER_NAME/.ssh/id_rsa.pub
 
-RUN echo "ssh_prv_key=$ssh_prv_key"
-RUN echo "ssh_pub_key=$ssh_pub_key"
-
-
 # Create the directory structure for the Yocto build in the container. The lowest two directory
 # levels must be the same as on the host.
-ENV BUILD_INPUT_DIR /home/$USER_NAME/yocto/input
-ENV BUILD_OUTPUT_DIR /home/$USER_NAME/yocto/output
-RUN mkdir -p $BUILD_INPUT_DIR $BUILD_OUTPUT_DIR
+ENV BUILD_DIR /home/$USER_NAME/yocto/input/$PROJECT
+RUN mkdir -p $BUILD_DIR
 
 # Fetch sources. Repo fetches base repository and downloads other source repositories performing sync command.
-WORKDIR $BUILD_INPUT_DIR
-RUN repo init -u git@bitbucket.org:gnateam/gnacode-minicube-bsp-platform.git -b jethro
+ARG branch="dev"
+WORKDIR $BUILD_DIR
+RUN repo init -u git@bitbucket.org:gnateam/gnacode-minicube-bsp-platform.git -b $branch
 RUN repo sync
 
 # Prepare Yocto's build environment. If TEMPLATECONF is set, the script oe-init-build-env will
 # install the customised files bblayers.conf and local.conf. This script initialises the Yocto
 # build environment. The bitbake command builds the rootfs for our embedded device.
-WORKDIR $BUILD_OUTPUT_DIR
-#ENV TEMPLATECONF=$BUILD_INPUT_DIR/$PROJECT/sources/meta-$PROJECT/custom
-#CMD source $BUILD_INPUT_DIR/$PROJECT/sources/poky/oe-init-build-env build \
-#    && bitbake $PROJECT-image
+ENV EULA=1
+ENV MACHINE=imx28minicube
+CMD cd $BUILD_DIR && source ./setup-environment build \
+    && bitbake core-image-$PROJECT
