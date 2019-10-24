@@ -42,7 +42,7 @@ ENV PROJECT minicube
 # name of the group and user is minicube.
 ARG host_uid=1001
 ARG host_gid=1001
-RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -m -s /bin/bash -u $host_uid $USER_NAME
+RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -G sudo -m -s /bin/bash -u $host_uid $USER_NAME
 
 # Perform the Yocto build as user minicube (not as root).
 # NOTE: The USER command does not set the environment variable HOME.
