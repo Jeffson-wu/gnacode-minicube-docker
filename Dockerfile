@@ -2,14 +2,14 @@
 
 # In any directory on the docker host, perform the following actions:
 #   * Copy this Dockerfile in the directory.
-#   * Create input and output directories: mkdir -p yocto/output yocto/input
+#   * Create output directory: mkdir -p ./output
 #   * Build the Docker image with the following command:
 #     Note, that ssh keys will be imported from local ~/.ssh
 #     docker build --tag "minicube-image:latest" --no-cache --build-arg "host_uid=$(id -u)" --build-arg "host_gid=$(id -g)"  --build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)" --build-arg "ssh_pub_key=$(cat ~/.ssh/id_rsa.pub)" .
 #   * Run the Docker image, which in turn runs the Yocto and which produces the Linux rootfs,
 #     with the following command:
-#     docker run -it --rm -v $PWD/yocto/output:/home/minicube/yocto/output minicube-image:latest
-#     
+#     docker run -it --rm -v $PWD/output:/home/minicube/output minicube-image:latest
+#
 
 # Use Ubuntu 16.04 LTS as the basis for the Docker image.
 FROM ubuntu:16.04
@@ -66,8 +66,9 @@ RUN echo "$ssh_prv_key" > /home/$USER_NAME/.ssh/id_rsa && \
 
 # Create the directory structure for the Yocto build in the container. The lowest two directory
 # levels must be the same as on the host.
-ENV BUILD_DIR /home/$USER_NAME/yocto/input/$PROJECT
-RUN mkdir -p $BUILD_DIR
+ENV BUILD_DIR /home/$USER_NAME/bld
+ENV OUTPUT_DIR /home/$USER_NAME/output
+RUN mkdir -p $BUILD_DIR $OUTPUT_DIR
 
 # Fetch sources. Repo fetches base repository and downloads other source repositories performing sync command.
 ARG branch="dev"
@@ -81,4 +82,5 @@ RUN repo sync
 ENV EULA=1
 ENV MACHINE=imx28minicube
 CMD cd $BUILD_DIR && source ./setup-environment build \
-    && bitbake core-image-$PROJECT
+    && bitbake core-image-$PROJECT \
+    && rm -rf $OUTPUT_DIR/* && cp -r $BUILD_DIR/build/tmp/deploy/images $OUTPUT_DIR/
