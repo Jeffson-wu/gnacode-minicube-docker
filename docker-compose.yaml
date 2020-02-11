@@ -1,0 +1,58 @@
+# version: "3.7"
+# services:
+
+#   jenkins:
+#     image: jenkins/jenkins:lts
+#     ports:
+#       - "0.0.0.0:50000:50000"
+#       - "0.0.0.0:8080:8080"
+#     volumes:
+#       - jenkins-data:/var/jenkins_home
+#     depends_on:
+#       - yocto
+
+#   yocto:
+#     build: .
+#     volumes:
+#       - "/home/minicube/projects/minicube/subprojects/gnacode-minicube-docker/output:/home/minicube/output"
+
+# volumes:
+#   jenkins-data:
+#     name: jenkins-data
+
+
+version: "3.7"
+services:
+
+  jenkins:
+    build: 
+      context: .
+      dockerfile: jenkins.dockerfile
+      args:
+        - ssh_prv_key
+        - ssh_pub_key
+    image: biovices/jenkins:latest
+    ports:
+      - "0.0.0.0:50000:50000"
+      - "0.0.0.0:8080:8080"
+    volumes:
+      - jenkins-data:/var/jenkins_home
+      - ./scripts:/home/jenkins/scripts
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    depends_on:
+      - yocto
+    container_name: jenkins
+
+  yocto:
+    build:
+      context: .
+      dockerfile: yocto.dockerfile
+      args:
+        - ssh_prv_key
+        - ssh_pub_key
+    image: biovices/yocto:latest
+    container_name: yocto
+
+volumes:
+  jenkins-data:
+    name: jenkins-data
