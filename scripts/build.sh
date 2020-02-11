@@ -5,7 +5,7 @@ OUTPUT_DIR=/home/minicube/output
 
 mkdir -p $(pwd)/output
 
-docker run -it --rm -v $(pwd)/output:${OUTPUT_DIR} biovices/yocto:latest /bin/sh -c " \
+docker run -i --rm -v $(pwd)/output:${OUTPUT_DIR} biovices/yocto:latest /bin/sh -c " \
     export EULA=1 && \
     export MACHINE=imx28minicube && \
     repo init -u git@bitbucket.org:gnateam/gnacode-minicube-bsp-platform.git -b ${BRANCH} && \
