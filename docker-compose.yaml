@@ -1,25 +1,9 @@
-# version: "3.7"
-# services:
-
-#   jenkins:
-#     image: jenkins/jenkins:lts
-#     ports:
-#       - "0.0.0.0:50000:50000"
-#       - "0.0.0.0:8080:8080"
-#     volumes:
-#       - jenkins-data:/var/jenkins_home
-#     depends_on:
-#       - yocto
-
-#   yocto:
-#     build: .
-#     volumes:
-#       - "/home/minicube/projects/minicube/subprojects/gnacode-minicube-docker/output:/home/minicube/output"
-
-# volumes:
-#   jenkins-data:
-#     name: jenkins-data
-
+#To deploy run:
+#   export ssh_prv_key="$(cat ~/.ssh/id_rsa_bitbucket_minicube)" && \
+#   export ssh_pub_key="$(cat ~/.ssh/id_rsa_bitbucket_minicube.pub)"  && \
+#   export uid="$(id -u $(whoami))" && \
+#   export gid="$(id -g $(whoami))" && \
+#   docker-compose up
 
 version: "3.7"
 services:
@@ -31,6 +15,8 @@ services:
       args:
         - ssh_prv_key
         - ssh_pub_key
+        - uid
+        - gid
     image: biovices/jenkins:latest
     ports:
       - "0.0.0.0:50000:50000"
@@ -50,6 +36,8 @@ services:
       args:
         - ssh_prv_key
         - ssh_pub_key
+        - uid
+        - gid
     image: biovices/yocto:latest
     container_name: yocto
 

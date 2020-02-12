@@ -5,7 +5,7 @@
 #   * Create output directory: mkdir -p ./output
 #   * Build the Docker image with the following command:
 #     Note, that ssh keys will be imported from local ~/.ssh
-#     docker build --tag "minicube-image:latest" --no-cache --build-arg "host_uid=$(id -u)" --build-arg "host_gid=$(id -g)"  --build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)" --build-arg "ssh_pub_key=$(cat ~/.ssh/id_rsa.pub)" .
+#     docker build --tag "minicube-image:latest" --no-cache --build-arg "uid=$(id -u)" --build-arg "gid=$(id -g)"  --build-arg ssh_prv_key="$(cat ~/.ssh/id_rsa)" --build-arg "ssh_pub_key=$(cat ~/.ssh/id_rsa.pub)" .
 #   * Run the Docker image, which in turn runs the Yocto and which produces the Linux rootfs,
 #     with the following command:
 #     docker run -it --rm -v $PWD/output:/home/minicube/output minicube-image:latest
@@ -39,19 +39,18 @@ RUN locale-gen en_US.UTF-8 && update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LC_ALL en_US.UTF-8
 
-ENV USER_NAME minicube
-ENV PROJECT minicube
+ENV USER_NAME yocto
 
 # The running container writes all the build artefacts to a host directory (outside the container).
 # The container can only write files to host directories, if it uses the same user ID and
-# group ID owning the host directories. The host_uid and group_uid are passed to the docker build
+# group ID owning the host directories. The uid and group_uid are passed to the docker build
 # command with the --build-arg option. By default, they are both 1001. The docker image creates
-# a group with host_gid and a user with host_uid and adds the user to the group. The symbolic
+# a group with gid and a user with uid and adds the user to the group. The symbolic
 # name of the group and user is minicube.
-ARG host_uid=1001
-ARG host_gid=1001
+ARG uid=1000
+ARG gid=1000
 # minicube user password is set to 'minicube'
-RUN groupadd -g $host_gid $USER_NAME && useradd -g $host_gid -G sudo -m -s /bin/bash -u $host_uid \
+RUN groupadd -g $gid $USER_NAME && useradd -g $gid -G sudo -m -s /bin/bash -u $uid \
  -p '$6$ldfK792N$TLYHKs4tIITJKoOB./U/8JUOmvfSyQHr/CkoSHyATSzPDaxne1Z.X6W/mf96iAqg6NcmdFS0iLri3ah4FvNHG.' $USER_NAME
 
 # Perform the Yocto build as user minicube (not as root).
