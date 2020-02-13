@@ -39,6 +39,8 @@ services:
         - uid
         - gid
     image: biovices/yocto:latest
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
     container_name: yocto
 
 volumes:

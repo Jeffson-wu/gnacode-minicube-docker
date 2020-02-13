@@ -89,16 +89,3 @@ RUN git config --global color.branch always
 RUN git config --global color.status always
 
 WORKDIR $BUILD_DIR
-
-# Fetch sources. Repo fetches base repository and downloads other source repositories performing sync command.
-# Prepare Yocto's build environment. If TEMPLATECONF is set, the script oe-init-build-env will
-# install the customised files bblayers.conf and local.conf. This script initialises the Yocto
-# build environment. The bitbake command builds the rootfs for our embedded device.
-# ENV EULA=1
-# ENV MACHINE=imx28minicube
-# CMD repo init -u git@bitbucket.org:gnateam/gnacode-minicube-bsp-platform.git -b dev && repo sync && && source ./setup-environment build \
-#    && bitbake core-image-$PROJECT \
-#    && rm -rf $OUTPUT_DIR/* && cp -r $BUILD_DIR/build/tmp/deploy/images $OUTPUT_DIR/
-#CMD cd $BUILD_DIR && source ./setup-environment build \
-#    && bitbake core-image-$PROJECT \
-#    && rm -rf $OUTPUT_DIR/* && cp -r $BUILD_DIR/build/tmp/deploy/images $OUTPUT_DIR/

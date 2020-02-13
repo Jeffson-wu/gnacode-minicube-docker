@@ -1,11 +1,11 @@
 #!/bin/sh
 
 BRANCH=dev
-OUTPUT_DIR=/home/minicube/output
+OUTPUT_DIR=$(pwd)/output
 
-mkdir -p $(pwd)/output
+mkdir -p ${OUTPUT_DIR}
 
-docker run -i --rm -v $(pwd)/output:${OUTPUT_DIR} biovices/yocto:latest /bin/sh -c " \
+docker run -i --rm -v jenkins-data:/var/jenkins_home biovices/yocto:latest /bin/sh -c " \
     export EULA=1 && \
     export MACHINE=imx28minicube && \
     repo init -u git@bitbucket.org:gnateam/gnacode-minicube-bsp-platform.git -b ${BRANCH} && \
