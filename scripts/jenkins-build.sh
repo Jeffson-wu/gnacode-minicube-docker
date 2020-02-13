@@ -13,5 +13,5 @@ docker run -i --rm -v jenkins-data:/var/jenkins_home biovices/yocto:latest /bin/
     source ./setup-environment build && \
     bitbake core-image-minicube && \
     rm -rf ${OUTPUT_DIR}/* && \
-    cp -r \${BUILD_DIR}/build/tmp/deploy/images ${OUTPUT_DIR}
+    cp -r \${BUILD_DIR}/build/tmp/deploy/images/imx28minicube/* ${OUTPUT_DIR}
 "
