@@ -1,6 +1,10 @@
 #!/bin/sh
 
-BRANCH=dev
+
+if [ -z "${BRANCH}" ]; then 
+    BRANCH=dev
+fi
+
 OUTPUT_DIR=$(pwd)/output
 
 mkdir -p ${OUTPUT_DIR}
