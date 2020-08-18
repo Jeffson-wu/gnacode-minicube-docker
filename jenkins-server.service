@@ -1,0 +1,14 @@
+[Unit]
+Description=FOTA Server
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+ 
+[Service]
+User=fota2
+Restart=always
+ExecStart=/bin/sh -c "cd /opt/minicube/jenkins-server && docker-compose up"
+ExecStop=bin/sh -c "cd /opt/minicube/jenkins-server && docker-compose down"
+ 
+[Install]
+WantedBy=multi-user.target
